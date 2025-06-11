@@ -8,6 +8,7 @@ A Solana match-three puzzle game built with Solana, React, and TypeScript.
 ## contact
 - [Telegram](https://t.me/caterpillardev)
 - [Twitter](https://x.com/caterpillardev)
+
 ## Game Features
 
 - **Blockchain Integration**
