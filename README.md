@@ -5,7 +5,8 @@
 A Solana match-three puzzle game built with Solana, React, and TypeScript.
 
 </div>
-## contact
+
+## Contact
 - [Telegram](https://t.me/caterpillardev)
 - [Twitter](https://x.com/caterpillardev)
 
