@@ -1,50 +1,129 @@
-﻿<div align="center">
-
-# [RoboDash⚡](https://robo-dash.netlify.app)
-
-> ### _RoboDash is a match three puzzle game. The objective of the game is to match three or more gems of the same color in a row to earn points. One of the unique features of the game is that it allows you to compete with other users based on your score, making the game more engaging and competitive._
-
-<br>
-
-### Netlify Site Status : [![Netlify Status](https://api.netlify.com/api/v1/badges/0333869a-0aca-4829-94e8-0b60cd59270c/deploy-status)](https://app.netlify.com/sites/robo-dash/deploys)
-
-</div>
-
-<br>
-
-## Tech Stack and Dependencies
-
-<br>
+﻿# Solana Match Three Puzzle Game
 
 <div align="center">
 
-| <div align ="center">Name </div>               | <div align = "center">Description</div>              |
-| ---------------------------------------------- | ---------------------------------------------------- |
-| **[ReactJs](https://reactjs.org)**             | Front End                                            |
-| **[ExpressJs](https://expressjs.com)**         | Back End                                             |
-| **[Tailwind CSS](https://tailwindcss.com/)**   | CSS Framework                                        |
-| **[Auth0](https://auth0.com/)**                | Authentication and Authorization platform            |
-| **[Axios](https://axios-http.com/docs/intro)** | Promise based HTTP client for the browser and NodeJs |
-| **[MongoDb](https://www.mongodb.com/)**        | Database                                             |
+A Solana match-three puzzle game built with Solana, React, and TypeScript.
 
 </div>
+## contact
+- [Telegram](https://t.me/caterpillardev)
+- [Twitter](https://x.com/caterpillardev)
+## Game Features
 
-## Demo
+- **Blockchain Integration**
+  - On-chain score tracking
+  - Immutable game history
+  - Transparent leaderboard
+  - Player achievements
 
-<br>
+- **Game Mechanics**
+  - Match-three puzzle gameplay
+  - Multiple difficulty levels
+  - Power-ups and special tiles
+  - Time-based challenges
+  - Progressive difficulty scaling
 
-<!-- ![Demo](Output/Rd.gif) -->
+- **Web3 Features**
+  - Phantom wallet integration
+  - On-chain game state
+  - Transaction-based actions
+  - Player authentication
+  - Score verification
 
-![Demo](https://github.com/HariKrishna-28/RoboDash/blob/main/Output/Rd.gif)
+## Tech Stack
 
-<br>
+### Frontend
+- **React 18** with TypeScript
+- **Tailwind CSS** for styling
+- **Solana Web3.js** for blockchain interaction
+- **Phantom Wallet** for authentication
+- **React Context** for state management
 
-<br>
+### Backend
+- **Solana Program** (Rust)
+  - Anchor Framework
+  - Program-derived addresses
+  - On-chain data storage
+  - Transaction processing
 
-> ### _As the server is hosted on a free Heroku account, the server enters ‘sleep mode’ when not in use for 60 minutes. If you notice an initial delay on the leaderboard screen, please allow a few seconds for the servers to wake up._
 
-<br>
+## 📁 Project Structure
 
-## Find the app [here](https://robo-dash.netlify.app/).
+```
+solana-match-three/
+├── programs/                    # Solana program
+│   └── match-three/            # Game program
+│       ├── src/                # Rust source code
+│       └── Cargo.toml          # Rust dependencies
+├── client/                     # Frontend
+│   ├── src/
+│   │   ├── components/        # React components
+│   │   ├── contexts/         # React contexts
+│   │   ├── types/           # TypeScript types
+│   │   └── styles/          # CSS styles
+│   └── public/              # Static assets
+├── tests/                    # Program tests
+├── Anchor.toml              # Anchor configuration
+└── package.json            # Project dependencies
+```
 
-<br>
+## 🧪 Solana Program Features
+
+### Game State Management
+- On-chain game state storage
+- Player account tracking
+- Score persistence
+- Level progression
+
+### Security Features
+- Program-derived addresses
+- Transaction signing
+- Input validation
+- Error handling
+
+### Game Actions
+- Initialize game
+- Update score
+- Complete level
+- Track achievements
+
+## 🔒 Security Considerations
+
+### Wallet Security
+- Never share private keys
+- Use Phantom wallet for transactions
+- Verify transaction details
+- Keep wallet software updated
+
+### Program Security
+- Input validation
+- Account ownership checks
+- Proper error handling
+- Transaction signing verification
+
+### Best Practices
+- Test on devnet first
+- Use small amounts for testing
+- Verify program deployment
+- Monitor transaction status
+
+## 🚨 Important Notes
+
+### Development
+- Always use devnet for testing
+- Keep Solana CLI tools updated
+- Monitor program logs
+- Test all game features
+
+
+- Open an issue for bugs
+- Use discussions for questions
+- Check documentation first
+- Join our community
+
+## 🔗 Links
+
+- [Solana Documentation](https://docs.solana.com)
+- [Anchor Framework](https://www.anchor-lang.com)
+- [Phantom Wallet](https://phantom.app)
+- [React Documentation](https://reactjs.org)
