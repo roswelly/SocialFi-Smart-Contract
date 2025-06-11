@@ -1,8 +1,8 @@
-﻿# Solana Match Three Puzzle Game
+﻿# Web3 Match Three Puzzle Game
 
 <div align="center">
 
-A Solana match-three puzzle game built with Solana, React, and TypeScript.
+A Web3 match-three puzzle game built with Solana, EVM, Sui, React, and TypeScript.
 
 </div>
 
