@@ -1,131 +1,171 @@
-﻿# Web3 Match Three Puzzle Game
+# Caterpillar SocialFi- Decentralized Blogging Platform
 
-<div align="center">
-
-A Web3 match-three puzzle game built with Solana, EVM, Sui, React, and TypeScript.
-
-</div>
+A Solana decentralized blogging platform with NFT integration, built using the Anchor framework.
 
 ## Contact
-- [Telegram](https://t.me/caterpillardev)
-- [Twitter](https://x.com/caterpillardev)
 
-## Game Features
+  - [Telegram](https://t.me/caterpillardev)
+  - [Twitter](https://x.com/caterpillardev)
 
-- **Blockchain Integration**
-  - On-chain score tracking
-  - Immutable game history
-  - Transparent leaderboard
-  - Player achievements
+## Features
 
-- **Game Mechanics**
-  - Match-three puzzle gameplay
-  - Multiple difficulty levels
-  - Power-ups and special tiles
-  - Time-based challenges
-  - Progressive difficulty scaling
+- **Content Management**
+  - Create and edit blog posts
+  - Support for cover images
+  - Category and keyword tagging
+  - Content moderation system
 
-- **Web3 Features**
-  - Phantom wallet integration
-  - On-chain game state
-  - Transaction-based actions
-  - Player authentication
-  - Score verification
+- **User System**
+  - User profile management
+  - Reputation scoring
+  - Rate limiting
+  - Ban system
 
-## Tech Stack
+- **NFT Integration**
+  - Associate blog posts with NFT collections
+  - Track collectors
+  - Manage mint addresses
 
-### Frontend
-- **React 18** with TypeScript
-- **Tailwind CSS** for styling
-- **Solana Web3.js** for blockchain interaction
-- **Phantom Wallet** for authentication
-- **React Context** for state management
+- **Engagement Features**
+  - Upvote/downvote system
+  - Vote tracking
+  - Post locking mechanism
 
-### Backend
-- **Solana Program** (Rust)
-  - Anchor Framework
-  - Program-derived addresses
-  - On-chain data storage
-  - Transaction processing
+## Prerequisites
 
+- [Rust](https://www.rust-lang.org/tools/install)
+- [Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools)
+- [Anchor Framework](https://www.anchor-lang.com/docs/installation)
+- [Node.js](https://nodejs.org/) and [Yarn](https://yarnpkg.com/)
 
-## 📁 Project Structure
+## Installation
 
-```
-solana-match-three/
-├── programs/                    # Solana program
-│   └── match-three/            # Game program
-│       ├── src/                # Rust source code
-│       └── Cargo.toml          # Rust dependencies
-├── client/                     # Frontend
-│   ├── src/
-│   │   ├── components/        # React components
-│   │   ├── contexts/         # React contexts
-│   │   ├── types/           # TypeScript types
-│   │   └── styles/          # CSS styles
-│   └── public/              # Static assets
-├── tests/                    # Program tests
-├── Anchor.toml              # Anchor configuration
-└── package.json            # Project dependencies
+1. Clone the repository:
+```bash
+git clone https://github.com/caterpillardev/caterpillar-socialfi-contract.git
+cd caterpillar-socialfi-contract
 ```
 
-## 🧪 Solana Program Features
+2. Install dependencies:
+```bash
+yarn install
+```
 
-### Game State Management
-- On-chain game state storage
-- Player account tracking
-- Score persistence
-- Level progression
+3. Build the program:
+```bash
+anchor build
+```
 
-### Security Features
-- Program-derived addresses
-- Transaction signing
-- Input validation
-- Error handling
+## Development
 
-### Game Actions
-- Initialize game
-- Update score
-- Complete level
-- Track achievements
+### Local Development
 
-## 🔒 Security Considerations
+1. Start a local Solana validator:
+```bash
+solana-test-validator
+```
 
-### Wallet Security
-- Never share private keys
-- Use Phantom wallet for transactions
-- Verify transaction details
-- Keep wallet software updated
+2. Deploy the program:
+```bash
+anchor deploy
+```
 
-### Program Security
-- Input validation
-- Account ownership checks
-- Proper error handling
-- Transaction signing verification
+3. Run tests:
+```bash
+anchor test
+```
 
-### Best Practices
-- Test on devnet first
-- Use small amounts for testing
-- Verify program deployment
-- Monitor transaction status
+### Program Structure
 
-## 🚨 Important Notes
+```
+caterpillar_contract/
+├── src/
+│   ├── instructions/     # Individual instruction handlers
+│   ├── lib.rs           # Main program entry point
+│   ├── state.rs         # Data structures
+│   ├── error.rs         # Error definitions
+│   ├── constant.rs      # Constants
+│   └── validation.rs    # Input validation
+├── tests/               # Test suite
+└── migrations/          # Database migrations
+```
 
-### Development
-- Always use devnet for testing
-- Keep Solana CLI tools updated
-- Monitor program logs
-- Test all game features
+## Smart Contract Architecture
 
+### State Accounts
 
-- Open an issue for bugs
-- Use discussions for questions
-- Check documentation first
-- Join our community
+- `UserProfile`: User information and statistics
+- `BlogPost`: Content storage and engagement metrics
+- `CollectorInfo`: NFT collection tracking
+- `VoteInfo`: Voting system data
+- `RateLimit`: Rate limiting mechanism
+- `ModerationStatus`: Content moderation tracking
 
-## 🔗 Links
+### Key Instructions
 
-- [Solana Documentation](https://docs.solana.com)
-- [Anchor Framework](https://www.anchor-lang.com)
-- [Phantom Wallet](https://phantom.app)
-- [React Documentation](https://reactjs.org)
+- `create_user_profile`: Create a new user profile
+- `create_blog_post`: Create a new blog post
+- `edit_user_profile`: Update user profile information
+- `edit_blog_post`: Modify blog post content
+- `add_collector`: Add an NFT collector
+- `add_vote`: Add a vote to a blog post
+- `edit_vote`: Modify an existing vote
+
+## Security Features
+
+- Input validation for all user inputs
+- Rate limiting for post creation
+- Content moderation system
+- User ban mechanism
+- Vote tracking and validation
+
+## Testing
+
+Run the test suite:
+```bash
+anchor test
+```
+
+## Deployment
+
+### Devnet Deployment
+
+1. Configure for devnet:
+```bash
+solana config set --url devnet
+```
+
+2. Deploy the program:
+```bash
+anchor deploy
+```
+
+### Mainnet Deployment
+
+1. Configure for mainnet:
+```bash
+solana config set --url mainnet-beta
+```
+
+2. Deploy the program:
+```bash
+anchor deploy
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+Telegram - [@caterpillardev](https://t.me/caterpillardev)
+Twitter - [@caterpillardev](https://twitter.com/caterpillardev)
+
