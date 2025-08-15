@@ -4,8 +4,8 @@ A Solana decentralized blogging platform with NFT integration, built using the A
 
 ## Contact
 
-  - [Telegram](https://t.me/caterpillardev)
-  - [Twitter](https://x.com/caterpillardev)
+  - [Telegram](https://t.me/roswellecho)
+  - [Twitter](https://x.com/roswellecho)
 
 ## Features
 
