@@ -1,0 +1,348 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { createChart, CrosshairMode, IChartApi, Time } from 'lightweight-charts';
+import Image from 'next/image';
+import { formatAmountV3 } from '@/utils/blockchainUtils';
+import Spinner from '@/components/ui/Spinner';
+
+// First, add a ChartType enum above the ChartDataPoint interface
+enum ChartType {
+  CANDLESTICK = 'candle',
+  LINE = 'line',
+  BAR = 'bar',
+  AREA = 'area'
+}
+
+interface ChartDataPoint {
+  time: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+}
+
+interface PriceChartProps {
+  data: ChartDataPoint[];
+  liquidityEvents: any;
+  tokenInfo: any;
+}
+
+// Add a useWindowSize hook at the top of the file
+function useWindowSize() {
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 0,
+    height: typeof window !== 'undefined' ? window.innerHeight : 0,
+  });
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', handleResize);
+      handleResize(); // Call initially
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
+
+  return windowSize;
+}
+
+// Add chartType state
+const PriceChart: React.FC<PriceChartProps> = ({ data, liquidityEvents, tokenInfo }) => {
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const [chart, setChart] = useState<IChartApi | null>(null);
+  const [showUniswapInfo, setShowUniswapInfo] = useState<boolean | null>(null);
+  const [chartType, setChartType] = useState<ChartType>(ChartType.CANDLESTICK);
+  const [series, setSeries] = useState<any>(null);
+
+  // Add this function to handle chart type changes
+  const handleChartTypeChange = (newType: ChartType) => {
+    const isMobile = window.innerWidth < 768;
+    if (isMobile && newType !== ChartType.CANDLESTICK) {
+      return;
+    }
+    setChartType(newType);
+  };
+
+  // Update the ChartTypeSelector component
+  const ChartTypeSelector = () => {
+    const { width } = useWindowSize();
+    const isMobile = width < 768;
+
+    if (isMobile) {
+      return null;
+    }
+
+    return (
+      <div className="absolute top-4 left-4 z-10 flex space-x-2">
+        {Object.values(ChartType).map((type) => (
+          <button
+            key={type}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleChartTypeChange(type);
+            }}
+            className={`px-3 py-1 text-xs rounded-md transition-colors ${
+              chartType === type
+                ? 'bg-[var(--primary)] text-black'
+                : 'bg-[var(--card2)] text-gray-400 hover:bg-[var(--card-hover)]'
+            }`}
+          >
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  // Update the chart creation useEffect
+  useEffect(() => {
+    if (chartContainerRef.current && data.length >= 2 && showUniswapInfo === false) {
+      const newChart = createChart(chartContainerRef.current, {
+        width: chartContainerRef.current.clientWidth,
+        height: 500,
+        layout: {
+          background: { color: '#1f2937' },
+          textColor: '#d1d5db',
+        },
+        grid: {
+          vertLines: { color: 'rgba(255, 255, 255, 0.1)' },
+          horzLines: { color: 'rgba(255, 255, 255, 0.1)' },
+        },
+        rightPriceScale: {
+          borderColor: 'rgba(255, 255, 255, 0.2)',
+          visible: true,
+          borderVisible: true,
+          alignLabels: true,
+          scaleMargins: {
+            top: 0.1,
+            bottom: 0.1,
+          },
+          autoScale: true,
+        },
+        timeScale: {
+          borderColor: 'rgba(255, 255, 255, 0.2)',
+          timeVisible: true,
+          secondsVisible: false,
+        },
+        crosshair: {
+          mode: CrosshairMode.Normal,
+        },
+        watermark: {
+          color: 'rgba(255, 255, 255, 0.1)',
+          visible: true,
+          text: 'CrossFun.xyz',
+          fontSize: 28,
+          horzAlign: 'center',
+          vertAlign: 'center',
+        },
+      });
+
+      setChart(newChart);
+
+      return () => {
+        newChart.remove();
+      };
+    }
+  }, [data, showUniswapInfo]); // Remove chartType from dependencies
+
+  // Add new useEffect for series management
+  useEffect(() => {
+    if (!chart || !data.length) return;
+
+    // Remove existing series
+    if (series) {
+      chart.removeSeries(series);
+    }
+
+    // Process data
+    const sortedData = [...data].sort((a, b) => a.time - b.time);
+    const processedData = sortedData.reduce((acc: ChartDataPoint[], curr, idx) => {
+      if (idx > 0 && curr.time === acc[acc.length - 1].time) {
+        curr = { ...curr, time: curr.time + 1 };
+      }
+      acc.push(curr);
+      return acc;
+    }, []);
+
+    const enhancedData = enhanceSmallCandles(processedData);
+    const chartData = enhancedData.map(item => ({
+      time: item.time as Time,
+      open: item.open,
+      high: item.high,
+      low: item.low,
+      close: item.close,
+      value: item.close
+    }));
+
+    // Create new series based on chart type
+    let newSeries;
+    const seriesOptions = {
+      priceFormat: {
+        type: 'custom' as const,
+        formatter: formatPrice,
+        minMove: 1e-9,
+      }
+    };
+
+    switch (chartType) {
+      case ChartType.CANDLESTICK:
+        newSeries = chart.addCandlestickSeries({
+          ...seriesOptions,
+          upColor: '#26a69a',
+          downColor: '#ef5350',
+          borderVisible: false,
+          wickUpColor: '#26a69a',
+          wickDownColor: '#ef5350',
+        });
+        break;
+      case ChartType.LINE:
+        newSeries = chart.addLineSeries({
+          ...seriesOptions,
+          color: '#2962FF',
+          lineWidth: 2,
+        });
+        break;
+      case ChartType.BAR:
+        newSeries = chart.addBarSeries({
+          ...seriesOptions,
+          upColor: '#26a69a',
+          downColor: '#ef5350',
+        });
+        break;
+      case ChartType.AREA:
+        newSeries = chart.addAreaSeries({
+          ...seriesOptions,
+          lineColor: '#2962FF',
+          topColor: '#2962FF',
+          bottomColor: 'rgba(41, 98, 255, 0.28)',
+        });
+        break;
+    }
+
+    newSeries.setData(chartData);
+    setSeries(newSeries);
+    chart.timeScale().fitContent();
+
+  }, [chart, data, chartType]); // Add dependencies for series management
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (chart && chartContainerRef.current) {
+        chart.applyOptions({ width: chartContainerRef.current.clientWidth });
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [chart]);
+
+  useEffect(() => {
+    if (liquidityEvents) {
+      const hasLiquidityEvents = liquidityEvents.liquidityEvents?.length > 0;
+      console.log('Setting showUniswapInfo:', hasLiquidityEvents);
+      setShowUniswapInfo(hasLiquidityEvents);
+    }
+  }, [liquidityEvents]);
+
+  if (showUniswapInfo === null) {
+    console.log('Showing spinner - showUniswapInfo is null');
+    return (
+      <div className="w-full h-[500px] bg-gray-800 rounded-lg overflow-hidden flex items-center justify-center">
+        <Spinner size="medium" />
+      </div>
+    );
+  }
+
+  if (showUniswapInfo === true) {
+    console.log('Showing Uniswap info');
+    const event = liquidityEvents?.liquidityEvents[0];
+    if (event) {
+      return (
+        <div className="w-full h-[500px] bg-gray-800 rounded-lg overflow-hidden flex flex-col items-center justify-center p-6">
+          <Image src={tokenInfo.logo} alt={tokenInfo.name} width={64} height={64} className="rounded-full mb-4" />
+          <h2 className="text-lg font-bold text-white mb-2">{tokenInfo.name} Listed on Uniswap</h2>
+          <br/>
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="text-center">
+              <p className="text-sm text-gray-400">Token</p>
+              <p className="text-lg font-semibold text-white">{formatAmountV3(event.tokenAmount)} {tokenInfo.symbol}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-gray-400">ETH</p>
+              <p className="text-lg font-semibold text-white">{formatAmountV3(event.ethAmount)} ETH</p>
+            </div>
+          </div>
+          <div className="flex space-x-4">
+            <a
+              href={`https://etherscan.io/tx/${event.txHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            >
+              View TXID
+            </a>
+            <a
+              href={`https://app.uniswap.org/swap?outputCurrency=${tokenInfo.address}&chain=mainnet`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-red-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded"
+            >
+              Buy on Uniswap
+            </a>
+          </div>
+        </div>
+      );
+    }
+  }
+
+  if (data.length < 2) {
+    console.log('Not enough data to display chart');
+    return (
+      <div className="w-full h-[500px] bg-gray-800 rounded-lg overflow-hidden flex items-center justify-center">
+        <p className="text-white text-lg">Not enough data to display chart</p>
+      </div>
+    );
+  }
+
+  // console.log('Rendering chart with type:', chartType);
+  return (
+    <div className="relative">
+      <ChartTypeSelector />
+      <div ref={chartContainerRef} className="w-full h-[500px] bg-gray-800 rounded-lg overflow-hidden" />
+    </div>
+  );
+};
+
+function enhanceSmallCandles(data: ChartDataPoint[]): ChartDataPoint[] {
+  const minCandleSize = 1e-9;
+  return data.map(item => {
+    const bodySize = Math.abs(item.open - item.close);
+    if (bodySize < minCandleSize) {
+      const midPoint = (item.open + item.close) / 2;
+      const adjustment = minCandleSize / 2;
+      return {
+        ...item,
+        open: midPoint - adjustment,
+        close: midPoint + adjustment,
+        high: Math.max(item.high, midPoint + adjustment),
+        low: Math.min(item.low, midPoint - adjustment)
+      };
+    }
+    return item;
+  });
+}
+
+function formatPrice(price: number) {
+  return price.toFixed(9);
+}
+
+export default PriceChart;

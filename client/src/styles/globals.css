@@ -1,0 +1,94 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@300..700&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #111111;
+  --foreground: #ffffff;
+  --primary: #60A5FA;
+  --primary-hover: #4B82EC;
+  --card: #222222;
+  --card2: #1a1a1a;
+  --card-hover: #2a2a2a;
+  --card-boarder: #333333;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold mb-4;
+  }
+
+  h1 {
+    @apply text-3xl md:text-4xl;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md font-bold transition-colors duration-200;
+  }
+
+  .btn-primary {
+    @apply bg-[var(--primary)] text-black px-4 py-2 rounded-lg hover:bg-[var(--primary-hover)] transition-colors;
+  }
+
+  .btn-secondary {
+    @apply bg-[var(--card)] text-white px-4 py-2 rounded-lg hover:bg-[var(--card-hover)] transition-colors;
+  }
+
+  .card {
+    @apply bg-gray-800 rounded-lg shadow-lg p-6;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .neon-text {
+    text-shadow: 0 0 5px rgb(var(--accent-color)), 0 0 10px rgb(var(--accent-color)), 0 0 15px rgb(var(--accent-color));
+  }
+
+  .neon-border {
+    box-shadow: 0 0 5px var(--primary),
+                0 0 10px var(--primary),
+                0 0 15px var(--primary);
+  }
+}
+
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--card-hover);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #444444;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
